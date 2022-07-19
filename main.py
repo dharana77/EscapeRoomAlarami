@@ -13,29 +13,29 @@ def create_decoder_book_instance(chrome_driver: webdriver.Chrome):
     decoder_book_rubato = "http://decoder.kr/book-rubato/"
     chrome_driver.get(decoder_book_rubato)
     month, year = get_month_and_year(chrome_driver)
-
+    months = ["January", "February", "March", "April", "May", "June", "July", \
+              "August", "September", "October", "November", "December"]
     current_date = -1
     end_date = 31
+
     print(month, year)
     while year != "2023" or month != "July":
         print(year, month, current_date)
-        # while current_date < 30:
-        print("in")
         calender = find_calender(chrome_driver)
-        print(calender)
         picker_table = calender.find_element(by=By.CLASS_NAME, value="picker__table")
-        print(picker_table)
         table_dates = picker_table.find_elements(by=By.CSS_SELECTOR, value="td")
-        print(table_dates)
-        current_table_date = get_next_clickable_date(table_dates, "31", current_date)
+        # picker__table> td > div
+        current_table_date = get_next_clickable_date(table_dates=table_dates, this_month_end_date="31",
+                                                     this_month=month, current_date=current_date)
         print(current_table_date)
+        # print(calender, picker_table, table_dates, current_table_date)
         # if current_table_date is None:
         #     break
 
         current_div_date = current_table_date.find_element(by=By.CSS_SELECTOR, value="div")
         current_date = int(current_div_date.text)
         print(current_date)
-        
+
         time_screen = find_time_screen(chrome_driver)
         time_buttons = time_screen.find_elements(By.CSS_SELECTOR, value="button")
         can_book_time_buttons = get_can_book_buttons(time_buttons)
@@ -44,9 +44,13 @@ def create_decoder_book_instance(chrome_driver: webdriver.Chrome):
             if book_button.get_attribute("disabled") != "true":
                 print("can be booked.")
         current_table_date.click()
+
         # next_month_calender_button = calender.find_element(by=By.CLASS_NAME, value="picker__nav--next")
         # next_month_calender_button.click()
-        month, year = get_month_and_year(chrome_driver)
+        this_month, this_year = get_month_and_year(chrome_driver)
+        if this_month != month:
+            time.sleep(3)
+        month, year = this_month, this_year
         print("month", month, "year", year)
 
     chrome_driver.quit()
@@ -80,8 +84,10 @@ def find_calender(chrome_driver: webdriver.Chrome):
     return picker_holder
 
 
-def get_next_clickable_date(table_dates: list, this_month_end_date: str, current_date: int = -1, ):
-    for table_date in table_dates:
+def get_next_clickable_date(table_dates: list, this_month_end_date: str, this_month: str, current_date: int = -1):
+    is_first_day_count = 0
+
+    for table_date in table_dates[1:]:
         div_date = table_date.find_element(by=By.CSS_SELECTOR, value="div")
 
         can_be_booked = div_date.get_attribute("aria-disabled")
@@ -92,11 +98,24 @@ def get_next_clickable_date(table_dates: list, this_month_end_date: str, current
             if current_date < int(div_date.text):
                 current_date = int(div_date.text)
                 return table_date
-            if current_date == 28 or current_date == 31 or current_date == 30:
+            if current_date == 31:
                 if int(div_date.text) == 1:
+                    is_first_day_count += 1
+                    if is_not_first_month(this_month, "July"):
+                        if is_first_day_count == 2:
+                            print("is_first_day_count")
+                            return table_date
+                        else:
+                            continue
                     return table_date
         # if table_date.text == this_month_end_date:
         #     return None
+
+
+def is_not_first_month(month: str, start_month):
+    if month != start_month:
+        return True
+    return False
 
 
 create_decoder_book_instance(driver)

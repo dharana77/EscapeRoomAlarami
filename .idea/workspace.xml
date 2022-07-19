@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="e53752bf-8d5a-490a-8f0a-288dd5074247" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -76,7 +76,8 @@
       <workItem from="1657358025793" duration="1994000" />
       <workItem from="1657375819245" duration="614000" />
       <workItem from="1657717667120" duration="13532000" />
-      <workItem from="1657739298785" duration="144000" />
+      <workItem from="1657739298785" duration="171000" />
+      <workItem from="1658240168917" duration="4255000" />
     </task>
     <servers />
   </component>
@@ -84,6 +85,6 @@
     <option name="version" value="3" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/EscapeRoomAlarami$main.coverage" NAME="main 커버리지 결과" MODIFIED="1657739051029" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/EscapeRoomAlarami$main.coverage" NAME="main 커버리지 결과" MODIFIED="1658244258454" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
