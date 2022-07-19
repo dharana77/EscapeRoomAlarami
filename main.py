@@ -24,28 +24,22 @@ def create_decoder_book_instance(chrome_driver: webdriver.Chrome):
         calender = find_calender(chrome_driver)
         picker_table = calender.find_element(by=By.CLASS_NAME, value="picker__table")
         table_dates = picker_table.find_elements(by=By.CSS_SELECTOR, value="td")
-        # picker__table> td > div
-        current_month_end_date = get_month_end_date(current_month=month)
 
+        current_month_end_date = get_month_end_date(current_month=month)
         current_table_date = get_next_clickable_date(table_dates=table_dates,
                                                      this_month_end_date=current_month_end_date,
                                                      this_month=month, current_date=current_date)
         current_div_date = current_table_date.find_element(by=By.CSS_SELECTOR, value="div")
         current_date = int(current_div_date.text)
-        print(current_date)
 
         time_screen = find_time_screen(chrome_driver)
         time_buttons = time_screen.find_elements(By.CSS_SELECTOR, value="button")
         can_book_time_buttons = get_can_book_buttons(time_buttons)
-
-        for book_button in can_book_time_buttons:
-            if book_button.get_attribute("disabled") != "true":
-                print("can be booked.")
+        check_can_book_time_buttons(can_book_time_buttons=can_book_time_buttons)
         current_table_date.click()
 
         this_month, this_year = get_month_and_year(chrome_driver)
-        if this_month != month:
-            time.sleep(3)
+        wait_three_seconds_if_month_changed(this_month=this_month, month=month)
         month, year = this_month, this_year
         print("month", month, "year", year)
 
@@ -131,6 +125,17 @@ def get_month_end_date(current_month: str):
             return month_end_dates[month_number]
     print("get_month_end_date errored")
     return 31
+
+
+def wait_three_seconds_if_month_changed(this_month: str, month: str):
+    if this_month != month:
+        time.sleep(3)
+
+
+def check_can_book_time_buttons(can_book_time_buttons: list):
+    for book_button in can_book_time_buttons:
+        if book_button.get_attribute("disabled") != "true":
+            print("can be booked.")
 
 
 create_decoder_book_instance(driver)
