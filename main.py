@@ -4,6 +4,8 @@ from selenium.webdriver.common.by import By
 
 from webdriver_manager.chrome import ChromeDriverManager
 import time
+import datetime
+
 
 options = webdriver.ChromeOptions()
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
@@ -13,19 +15,20 @@ def create_decoder_book_instance(chrome_driver: webdriver.Chrome):
     decoder_book_rubato = "http://decoder.kr/book-rubato/"
     chrome_driver.get(decoder_book_rubato)
     month, year = get_month_and_year(chrome_driver)
-    months = ["January", "February", "March", "April", "May", "June", "July",
-              "August", "September", "October", "November", "December"]
-    current_date = -1
-    end_date = 31
+    today = datetime.datetime.now()
 
-    print(month, year)
+    current_date = today.day
+
     while year != "2023" or month != "July":
         print(year, month, current_date)
         calender = find_calender(chrome_driver)
         picker_table = calender.find_element(by=By.CLASS_NAME, value="picker__table")
         table_dates = picker_table.find_elements(by=By.CSS_SELECTOR, value="td")
         # picker__table> td > div
-        current_table_date = get_next_clickable_date(table_dates=table_dates, this_month_end_date="31",
+        current_month_end_date = get_month_end_date(current_month=month)
+
+        current_table_date = get_next_clickable_date(table_dates=table_dates,
+                                                     this_month_end_date=current_month_end_date,
                                                      this_month=month, current_date=current_date)
         current_div_date = current_table_date.find_element(by=By.CSS_SELECTOR, value="div")
         current_date = int(current_div_date.text)
@@ -82,15 +85,16 @@ def get_next_clickable_date(table_dates: list, this_month_end_date: str, this_mo
 
     for table_date in table_dates[1:]:
         div_date = table_date.find_element(by=By.CSS_SELECTOR, value="div")
+        div_text_date = int(div_date.text)
 
         can_be_booked = div_date.get_attribute("aria-disabled")
         aria_selected = div_date.get_attribute("aria-selected")
         aria_active_descendant = div_date.get_attribute("aria-activedescendant")
 
         if can_be_booked is None and (aria_selected != "true" and aria_active_descendant != "true"):
-            if current_date < int(div_date.text):
-                current_date = int(div_date.text)
+            if is_current_date_in_next_seven_days(current_date=current_date, div_text_date=div_text_date):
                 return table_date
+
             if current_date == 31:
                 if int(div_date.text) == 1:
                     is_first_day_count += 1
@@ -107,6 +111,26 @@ def is_not_first_month(month: str, start_month):
     if month != start_month:
         return True
     return False
+
+
+def is_current_date_in_next_seven_days(current_date: int, div_text_date: int):
+    diff = div_text_date - current_date
+    if 1 <= diff <= 7:
+        return True
+    return False
+
+
+def get_month_end_date(current_month: str):
+    months = ["January", "February", "March", "April", "May", "June", "July",
+              "August", "September", "October", "November", "December"]
+    month_number = -1
+    month_end_dates = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+    for idx, month in enumerate(months):
+        if month == current_month:
+            return month_end_dates[month_number]
+    print("get_month_end_date errored")
+    return 31
 
 
 create_decoder_book_instance(driver)
