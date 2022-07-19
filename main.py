@@ -13,7 +13,7 @@ def create_decoder_book_instance(chrome_driver: webdriver.Chrome):
     decoder_book_rubato = "http://decoder.kr/book-rubato/"
     chrome_driver.get(decoder_book_rubato)
     month, year = get_month_and_year(chrome_driver)
-    months = ["January", "February", "March", "April", "May", "June", "July", \
+    months = ["January", "February", "March", "April", "May", "June", "July",
               "August", "September", "October", "November", "December"]
     current_date = -1
     end_date = 31
@@ -27,11 +27,6 @@ def create_decoder_book_instance(chrome_driver: webdriver.Chrome):
         # picker__table> td > div
         current_table_date = get_next_clickable_date(table_dates=table_dates, this_month_end_date="31",
                                                      this_month=month, current_date=current_date)
-        print(current_table_date)
-        # print(calender, picker_table, table_dates, current_table_date)
-        # if current_table_date is None:
-        #     break
-
         current_div_date = current_table_date.find_element(by=By.CSS_SELECTOR, value="div")
         current_date = int(current_div_date.text)
         print(current_date)
@@ -45,8 +40,6 @@ def create_decoder_book_instance(chrome_driver: webdriver.Chrome):
                 print("can be booked.")
         current_table_date.click()
 
-        # next_month_calender_button = calender.find_element(by=By.CLASS_NAME, value="picker__nav--next")
-        # next_month_calender_button.click()
         this_month, this_year = get_month_and_year(chrome_driver)
         if this_month != month:
             time.sleep(3)
@@ -108,8 +101,6 @@ def get_next_clickable_date(table_dates: list, this_month_end_date: str, this_mo
                         else:
                             continue
                     return table_date
-        # if table_date.text == this_month_end_date:
-        #     return None
 
 
 def is_not_first_month(month: str, start_month):
