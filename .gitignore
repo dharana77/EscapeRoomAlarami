@@ -1,2 +1,3 @@
-*.idea
+.idea/*
 #테스트
+/test/.pytest_cache/
